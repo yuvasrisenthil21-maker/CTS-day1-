@@ -1,0 +1,221 @@
+Enter password: ***********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 14
+Server version: 8.0.43 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database products;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use products;
+Database changed
+mysql> create table products(product_id int,product_name varchar(100),category varchar(50),unit_price decimal(10,2));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> insert into products values(101,'laptop','Electronics','500.00),(101,'laptop','Electronics','500.00),^C
+mysql> insert into products values(101,'Laptop','Electronics',500.00),(102,'smartphones','Electronics',300.00),(103,'headphones','Electronics',30.00),(104,'Keyboard','Electronics',20.00),(105,'Mouse','Electronics',15.00);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from products;
++------------+--------------+-------------+------------+
+| product_id | product_name | category    | unit_price |
++------------+--------------+-------------+------------+
+|        101 | Laptop       | Electronics |     500.00 |
+|        102 | smartphones  | Electronics |     300.00 |
+|        103 | headphones   | Electronics |      30.00 |
+|        104 | Keyboard     | Electronics |      20.00 |
+|        105 | Mouse        | Electronics |      15.00 |
++------------+--------------+-------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select product_name,unit_price from products;
++--------------+------------+
+| product_name | unit_price |
++--------------+------------+
+| Laptop       |     500.00 |
+| smartphones  |     300.00 |
+| headphones   |      30.00 |
+| Keyboard     |      20.00 |
+| Mouse        |      15.00 |
++--------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from products where category='electronics';
++------------+--------------+-------------+------------+
+| product_id | product_name | category    | unit_price |
++------------+--------------+-------------+------------+
+|        101 | Laptop       | Electronics |     500.00 |
+|        102 | smartphones  | Electronics |     300.00 |
+|        103 | headphones   | Electronics |      30.00 |
+|        104 | Keyboard     | Electronics |      20.00 |
+|        105 | Mouse        | Electronics |      15.00 |
++------------+--------------+-------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select product_id,product_name from products where unit_price>100;
++------------+--------------+
+| product_id | product_name |
++------------+--------------+
+|        101 | Laptop       |
+|        102 | smartphones  |
++------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> select avg(unit_price) from products;
++-----------------+
+| avg(unit_price) |
++-----------------+
+|      173.000000 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select max(product_name),max(unit_price) from products;
++-------------------+-----------------+
+| max(product_name) | max(unit_price) |
++-------------------+-----------------+
+| smartphones       |          500.00 |
++-------------------+-----------------+
+1 row in set (0.01 sec)
+
+mysql> select product_name,unit_price from products where unit_price=(select max(unit_price)from products);
++--------------+------------+
+| product_name | unit_price |
++--------------+------------+
+| Laptop       |     500.00 |
++--------------+------------+
+1 row in set (0.02 sec)
+
+mysql> select product_name,unit_price from products order by unit_price desc;
++--------------+------------+
+| product_name | unit_price |
++--------------+------------+
+| Laptop       |     500.00 |
+| smartphones  |     300.00 |
+| headphones   |      30.00 |
+| Keyboard     |      20.00 |
+| Mouse        |      15.00 |
++--------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select product_name,unit_price from products where unit_price>=20 and unit_price<=600;
++--------------+------------+
+| product_name | unit_price |
++--------------+------------+
+| Laptop       |     500.00 |
+| smartphones  |     300.00 |
+| headphones   |      30.00 |
+| Keyboard     |      20.00 |
++--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> ^C
+mysql> select product_name,category from products order by category asc;
++--------------+-------------+
+| product_name | category    |
++--------------+-------------+
+| Laptop       | Electronics |
+| smartphones  | Electronics |
+| headphones   | Electronics |
+| Keyboard     | Electronics |
+| Mouse        | Electronics |
++--------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> create database dbs;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use dbs;
+Database changed
+mysql> create table saless(sale_id int,product_id int,quantity_sold int,sale_date date,total_price decimal(10,2));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into saless values(1,101,5,'2024-01-01',2500.00),(2,102,3,'2024-01-02',900.00),(3,103,2,'2024-01-02',60.00),(4,104,4,'2024-01-03',80.00),(5,105,6,'2024-01-03',900.00);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from saless;
++---------+------------+---------------+------------+-------------+
+| sale_id | product_id | quantity_sold | sale_date  | total_price |
++---------+------------+---------------+------------+-------------+
+|       1 |        101 |             5 | 2024-01-01 |     2500.00 |
+|       2 |        102 |             3 | 2024-01-02 |      900.00 |
+|       3 |        103 |             2 | 2024-01-02 |       60.00 |
+|       4 |        104 |             4 | 2024-01-03 |       80.00 |
+|       5 |        105 |             6 | 2024-01-03 |      90.00  |
++---------+------------+---------------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> select sale_id,sale_date from saless;
++---------+------------+
+| sale_id | sale_date  |
++---------+------------+
+|       1 | 2024-01-01 |
+|       2 | 2024-01-02 |
+|       3 | 2024-01-02 |
+|       4 | 2024-01-03 |
+|       5 | 2024-01-03 |
++---------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from saless where total_price>100;
++---------+------------+---------------+------------+-------------+
+| sale_id | product_id | quantity_sold | sale_date  | total_price |
++---------+------------+---------------+------------+-------------+
+|       1 |        101 |             5 | 2024-01-01 |     2500.00 |
+|       2 |        102 |             3 | 2024-01-02 |      900.00 | |
++---------+------------+---------------+------------+-------------+
+3 rows in set (0.00 sec)
+mysql> select sale_id,total_price from saless where sale_date='2024-01-03';
++---------+-------------+
+| sale_id | total_price |
++---------+-------------+
+|       4 |       80.00 |
+|       5 |      90.00  |
++---------+-------------+
+2 rows in set (0.02 sec)
+
+mysql> select sum(total_price) from saless;
++------------------+
+| sum(total_price) |
++------------------+
+|          3630.00 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select sum(quantity_sold) from saless;
++--------------------+
+| sum(quantity_sold) |
++--------------------+
+|                 20 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select sale_id,product_id,total_price from saless where quantity_sold>4;
++---------+------------+-------------+
+| sale_id | product_id | total_price |
++---------+------------+-------------+
+|       1 |        101 |     2500.00 |
+|       5 |        105 |      90.00  |
++---------+------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> select avg(total_price) from saless;
++------------------+
+| avg(total_price) |
++------------------+
+|       726.000000 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql>
+
+
