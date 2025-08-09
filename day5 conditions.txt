@@ -1,0 +1,610 @@
+mysql> create database db7;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use db7;
+Database changed
+mysql> CREATE TABLE tickets (
+    -> ticket_id INT PRIMARY KEY,
+    -> customer_name VARCHAR(100),
+    -> issue_type VARCHAR(50),
+    -> priority INT, -- 1 (Low), 2 (Medium), 3 (High)
+    -> status VARCHAR(20), -- Open, Closed, Pending, Escalated
+    -> created_date DATE,
+    -> assigned_team VARCHAR(50), -- Support Team names
+    -> location VARCHAR(50) -- City or Branch location
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO tickets (ticket_id, customer_name, issue_type, priority, status, created_date,
+    -> assigned_team, location) VALUES
+    -> (1, 'Alice', 'Network', 3, 'Open', '2025-08-01', 'Network Team', 'New York'),
+    -> (2, 'Bob', 'Software', 2, 'Closed', '2025-07-28', 'Software Team', 'Chicago'),
+    -> (3, 'Charlie', 'Hardware', 1, 'Pending', '2025-08-02', 'Hardware Team', 'San Francisco'),
+    -> (4, 'Diana', 'Network', 2, 'Open', '2025-08-03', 'Network Team', 'New York'),
+    -> (5, 'Eve', 'Software', 3, 'Closed', '2025-07-30', 'Software Team', 'Boston'),
+    -> (6, 'Frank', 'Software', 1, 'Pending', '2025-08-04', 'Software Team', 'Seattle'),
+    -> (7, 'Grace', 'Network', 2, 'Escalated', '2025-08-05', 'Network Team', 'Los Angeles'),
+    -> (8, 'Henry', 'Hardware', 3, 'Open', '2025-08-01', 'Hardware Team', 'Houston'),
+    -> (9, 'Ivy', 'Network', 1, 'Closed', '2025-07-29', 'Network Team', 'Chicago'),
+    -> (10, 'Jack', 'Software', 3, 'Open', '2025-08-06', 'Software Team', 'New York'),
+    -> (11, 'Kate', 'Hardware', 2, 'Pending', '2025-08-02', 'Hardware Team', 'Boston'),
+    -> (12, 'Leo', 'Software', 2, 'Closed', '2025-07-31', 'Software Team', 'San Francisco'),
+    -> (13, 'Mona', 'Network', 3, 'Escalated', '2025-08-03', 'Network Team', 'New York'),
+    -> (14, 'Nina', 'Hardware', 1, 'Open', '2025-08-04', 'Hardware Team', 'Seattle'),
+    -> (15, 'Oscar', 'Software', 3, 'Pending', '2025-08-01', 'Software Team', 'Los Angeles'),
+    -> (16, 'Paul', 'Network', 2, 'Closed', '2025-07-30', 'Network Team', 'Houston'),
+    -> (17, 'Queen', 'Hardware', 1, 'Pending', '2025-08-05', 'Hardware Team', 'New York'),
+    -> (18, 'Rita', 'Software', 2, 'Open', '2025-08-06', 'Software Team', 'Chicago'),
+    -> (19, 'Sam', 'Network', 3, 'Open', '2025-08-07', 'Network Team', 'Boston'),
+    -> (20, 'Tina', 'Hardware', 2, 'Escalated', '2025-08-02', 'Hardware Team', 'Seattle');
+Query OK, 20 rows affected (0.01 sec)
+Records: 20  Duplicates: 0  Warnings: 0
+
+mysql> select * from tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,customer_name,priority,
+    -> case priority
+    -> when 3 then 'high'
+    -> when 2 then 'medium'
+    -> when 1 then 'low'
+    -> end as urgency_based
+    -> from tickets;
++-----------+---------------+----------+---------------+
+| ticket_id | customer_name | priority | urgency_based |
++-----------+---------------+----------+---------------+
+|         1 | Alice         |        3 | high          |
+|         2 | Bob           |        2 | medium        |
+|         3 | Charlie       |        1 | low           |
+|         4 | Diana         |        2 | medium        |
+|         5 | Eve           |        3 | high          |
+|         6 | Frank         |        1 | low           |
+|         7 | Grace         |        2 | medium        |
+|         8 | Henry         |        3 | high          |
+|         9 | Ivy           |        1 | low           |
+|        10 | Jack          |        3 | high          |
+|        11 | Kate          |        2 | medium        |
+|        12 | Leo           |        2 | medium        |
+|        13 | Mona          |        3 | high          |
+|        14 | Nina          |        1 | low           |
+|        15 | Oscar         |        3 | high          |
+|        16 | Paul          |        2 | medium        |
+|        17 | Queen         |        1 | low           |
+|        18 | Rita          |        2 | medium        |
+|        19 | Sam           |        3 | high          |
+|        20 | Tina          |        2 | medium        |
++-----------+---------------+----------+---------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,customer_name,status,
+    -> case
+    -> when status in('open','escalated')then 'active'
+    -> when status='closed' then 'inactive'
+    -> else 'waiting'
+    -> end as status_class
+    -> from tickets;
++-----------+---------------+-----------+--------------+
+| ticket_id | customer_name | status    | status_class |
++-----------+---------------+-----------+--------------+
+|         1 | Alice         | Open      | active       |
+|         2 | Bob           | Closed    | inactive     |
+|         3 | Charlie       | Pending   | waiting      |
+|         4 | Diana         | Open      | active       |
+|         5 | Eve           | Closed    | inactive     |
+|         6 | Frank         | Pending   | waiting      |
+|         7 | Grace         | Escalated | active       |
+|         8 | Henry         | Open      | active       |
+|         9 | Ivy           | Closed    | inactive     |
+|        10 | Jack          | Open      | active       |
+|        11 | Kate          | Pending   | waiting      |
+|        12 | Leo           | Closed    | inactive     |
+|        13 | Mona          | Escalated | active       |
+|        14 | Nina          | Open      | active       |
+|        15 | Oscar         | Pending   | waiting      |
+|        16 | Paul          | Closed    | inactive     |
+|        17 | Queen         | Pending   | waiting      |
+|        18 | Rita          | Open      | active       |
+|        19 | Sam           | Open      | active       |
+|        20 | Tina          | Escalated | active       |
++-----------+---------------+-----------+--------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,issue_type,
+    -> case
+    -> when issue_type='software' then 'software issue'
+    -> when issue_type='hardware' then 'hardware issue'
+    -> when issue_type='network' then 'network issue'
+    -> else 'other'
+    -> end as issue_category
+    -> from tickets;
++-----------+------------+----------------+
+| ticket_id | issue_type | issue_category |
++-----------+------------+----------------+
+|         1 | Network    | network issue  |
+|         2 | Software   | software issue |
+|         3 | Hardware   | hardware issue |
+|         4 | Network    | network issue  |
+|         5 | Software   | software issue |
+|         6 | Software   | software issue |
+|         7 | Network    | network issue  |
+|         8 | Hardware   | hardware issue |
+|         9 | Network    | network issue  |
+|        10 | Software   | software issue |
+|        11 | Hardware   | hardware issue |
+|        12 | Software   | software issue |
+|        13 | Network    | network issue  |
+|        14 | Hardware   | hardware issue |
+|        15 | Software   | software issue |
+|        16 | Network    | network issue  |
+|        17 | Hardware   | hardware issue |
+|        18 | Software   | software issue |
+|        19 | Network    | network issue  |
+|        20 | Hardware   | hardware issue |
++-----------+------------+----------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,customer_name,
+    -> case
+    -> when left(customer_name,1)in('a','e','m','s') then 'vip'
+    -> else 'regular'
+    -> end as customer_type
+    -> from tickets;
++-----------+---------------+---------------+
+| ticket_id | customer_name | customer_type |
++-----------+---------------+---------------+
+|         1 | Alice         | vip           |
+|         2 | Bob           | regular       |
+|         3 | Charlie       | regular       |
+|         4 | Diana         | regular       |
+|         5 | Eve           | vip           |
+|         6 | Frank         | regular       |
+|         7 | Grace         | regular       |
+|         8 | Henry         | regular       |
+|         9 | Ivy           | regular       |
+|        10 | Jack          | regular       |
+|        11 | Kate          | regular       |
+|        12 | Leo           | regular       |
+|        13 | Mona          | vip           |
+|        14 | Nina          | regular       |
+|        15 | Oscar         | regular       |
+|        16 | Paul          | regular       |
+|        17 | Queen         | regular       |
+|        18 | Rita          | regular       |
+|        19 | Sam           | vip           |
+|        20 | Tina          | regular       |
++-----------+---------------+---------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,priority,status,
+    -> case
+    -> when priority=3 and status='open' then 'high priority open'
+    -> when priority=1 and status='closed' then 'low priority closed'
+    -> else 'other'
+    -> end as ticket_summary
+    -> from tickets;
++-----------+----------+-----------+---------------------+
+| ticket_id | priority | status    | ticket_summary      |
++-----------+----------+-----------+---------------------+
+|         1 |        3 | Open      | high priority open  |
+|         2 |        2 | Closed    | other               |
+|         3 |        1 | Pending   | other               |
+|         4 |        2 | Open      | other               |
+|         5 |        3 | Closed    | other               |
+|         6 |        1 | Pending   | other               |
+|         7 |        2 | Escalated | other               |
+|         8 |        3 | Open      | high priority open  |
+|         9 |        1 | Closed    | low priority closed |
+|        10 |        3 | Open      | high priority open  |
+|        11 |        2 | Pending   | other               |
+|        12 |        2 | Closed    | other               |
+|        13 |        3 | Escalated | other               |
+|        14 |        1 | Open      | other               |
+|        15 |        3 | Pending   | other               |
+|        16 |        2 | Closed    | other               |
+|        17 |        1 | Pending   | other               |
+|        18 |        2 | Open      | other               |
+|        19 |        3 | Open      | high priority open  |
+|        20 |        2 | Escalated | other               |
++-----------+----------+-----------+---------------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,status,priority,
+    -> case
+    -> when status='pending' or priority=3 then 'yes'
+    -> else 'no'
+    -> end as follow_up_required
+    -> from tickets;
++-----------+-----------+----------+--------------------+
+| ticket_id | status    | priority | follow_up_required |
++-----------+-----------+----------+--------------------+
+|         1 | Open      |        3 | yes                |
+|         2 | Closed    |        2 | no                 |
+|         3 | Pending   |        1 | yes                |
+|         4 | Open      |        2 | no                 |
+|         5 | Closed    |        3 | yes                |
+|         6 | Pending   |        1 | yes                |
+|         7 | Escalated |        2 | no                 |
+|         8 | Open      |        3 | yes                |
+|         9 | Closed    |        1 | no                 |
+|        10 | Open      |        3 | yes                |
+|        11 | Pending   |        2 | yes                |
+|        12 | Closed    |        2 | no                 |
+|        13 | Escalated |        3 | yes                |
+|        14 | Open      |        1 | no                 |
+|        15 | Pending   |        3 | yes                |
+|        16 | Closed    |        2 | no                 |
+|        17 | Pending   |        1 | yes                |
+|        18 | Open      |        2 | no                 |
+|        19 | Open      |        3 | yes                |
+|        20 | Escalated |        2 | no                 |
++-----------+-----------+----------+--------------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,issue_type as handling_group from tickets;
++-----------+----------------+
+| ticket_id | handling_group |
++-----------+----------------+
+|         1 | Network        |
+|         2 | Software       |
+|         3 | Hardware       |
+|         4 | Network        |
+|         5 | Software       |
+|         6 | Software       |
+|         7 | Network        |
+|         8 | Hardware       |
+|         9 | Network        |
+|        10 | Software       |
+|        11 | Hardware       |
+|        12 | Software       |
+|        13 | Network        |
+|        14 | Hardware       |
+|        15 | Software       |
+|        16 | Network        |
+|        17 | Hardware       |
+|        18 | Software       |
+|        19 | Network        |
+|        20 | Hardware       |
++-----------+----------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,location,
+    -> case
+    -> when location in('new york','chicago')then 'HQ'
+    -> else 'branch'
+    -> end as city_type
+    -> from tickets;
++-----------+---------------+-----------+
+| ticket_id | location      | city_type |
++-----------+---------------+-----------+
+|         1 | New York      | HQ        |
+|         2 | Chicago       | HQ        |
+|         3 | San Francisco | branch    |
+|         4 | New York      | HQ        |
+|         5 | Boston        | branch    |
+|         6 | Seattle       | branch    |
+|         7 | Los Angeles   | branch    |
+|         8 | Houston       | branch    |
+|         9 | Chicago       | HQ        |
+|        10 | New York      | HQ        |
+|        11 | Boston        | branch    |
+|        12 | San Francisco | branch    |
+|        13 | New York      | HQ        |
+|        14 | Seattle       | branch    |
+|        15 | Los Angeles   | branch    |
+|        16 | Houston       | branch    |
+|        17 | New York      | HQ        |
+|        18 | Chicago       | HQ        |
+|        19 | Boston        | branch    |
+|        20 | Seattle       | branch    |
++-----------+---------------+-----------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,status
+    -> from tickets
+    -> order by
+    -> case status
+    -> when 'escalated' then 1
+    -> when 'open' then 2
+    -> else 3
+    -> end;
++-----------+-----------+
+| ticket_id | status    |
++-----------+-----------+
+|         7 | Escalated |
+|        13 | Escalated |
+|        20 | Escalated |
+|         1 | Open      |
+|         4 | Open      |
+|         8 | Open      |
+|        10 | Open      |
+|        14 | Open      |
+|        18 | Open      |
+|        19 | Open      |
+|         2 | Closed    |
+|         3 | Pending   |
+|         5 | Closed    |
+|         6 | Pending   |
+|         9 | Closed    |
+|        11 | Pending   |
+|        12 | Closed    |
+|        15 | Pending   |
+|        16 | Closed    |
+|        17 | Pending   |
++-----------+-----------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,priority,status,
+    -> case
+    -> when priority=3 and status='open' then 'urgent'
+    -> else status
+    -> end as updated_status
+    -> from tickets;
++-----------+----------+-----------+----------------+
+| ticket_id | priority | status    | updated_status |
++-----------+----------+-----------+----------------+
+|         1 |        3 | Open      | urgent         |
+|         2 |        2 | Closed    | Closed         |
+|         3 |        1 | Pending   | Pending        |
+|         4 |        2 | Open      | Open           |
+|         5 |        3 | Closed    | Closed         |
+|         6 |        1 | Pending   | Pending        |
+|         7 |        2 | Escalated | Escalated      |
+|         8 |        3 | Open      | urgent         |
+|         9 |        1 | Closed    | Closed         |
+|        10 |        3 | Open      | urgent         |
+|        11 |        2 | Pending   | Pending        |
+|        12 |        2 | Closed    | Closed         |
+|        13 |        3 | Escalated | Escalated      |
+|        14 |        1 | Open      | Open           |
+|        15 |        3 | Pending   | Pending        |
+|        16 |        2 | Closed    | Closed         |
+|        17 |        1 | Pending   | Pending        |
+|        18 |        2 | Open      | Open           |
+|        19 |        3 | Open      | urgent         |
+|        20 |        2 | Escalated | Escalated      |
++-----------+----------+-----------+----------------+
+20 rows in set (0.00 sec)
+
+mysql> select
+    -> case
+    -> when priority=3 then 'high'
+    -> when priority=2 then 'medium'
+    -> when priority=1 then 'low'
+    -> end as urgency,
+    -> count(*) as total
+    -> from tickets
+    -> group by urgency;
++---------+-------+
+| urgency | total |
++---------+-------+
+| high    |     7 |
+| medium  |     8 |
+| low     |     5 |
++---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select ticket_id,priority,status,
+    -> case
+    -> when priority=3 and status='open' then 'immediate'
+    -> when priority=2 and status='pending' then 'scheduled'
+    -> when priority=1 and status='esacalated' then 'escalate'
+    -> else 'standard'
+    -> end as response_plan
+    -> from tickets;
++-----------+----------+-----------+---------------+
+| ticket_id | priority | status    | response_plan |
++-----------+----------+-----------+---------------+
+|         1 |        3 | Open      | immediate     |
+|         2 |        2 | Closed    | standard      |
+|         3 |        1 | Pending   | standard      |
+|         4 |        2 | Open      | standard      |
+|         5 |        3 | Closed    | standard      |
+|         6 |        1 | Pending   | standard      |
+|         7 |        2 | Escalated | standard      |
+|         8 |        3 | Open      | immediate     |
+|         9 |        1 | Closed    | standard      |
+|        10 |        3 | Open      | immediate     |
+|        11 |        2 | Pending   | scheduled     |
+|        12 |        2 | Closed    | standard      |
+|        13 |        3 | Escalated | standard      |
+|        14 |        1 | Open      | standard      |
+|        15 |        3 | Pending   | standard      |
+|        16 |        2 | Closed    | standard      |
+|        17 |        1 | Pending   | standard      |
+|        18 |        2 | Open      | standard      |
+|        19 |        3 | Open      | immediate     |
+|        20 |        2 | Escalated | standard      |
++-----------+----------+-----------+---------------+
+20 rows in set (0.00 sec)
+
+mysql> select ticket_id,created_date,
+    -> case
+    -> when created_date=curdate() then 'new'
+    -> when created_date<curdate()-interval 7 day then 'old'
+    -> else 'recent'
+    -> end as age_category
+    -> from tickets;
++-----------+--------------+--------------+
+| ticket_id | created_date | age_category |
++-----------+--------------+--------------+
+|         1 | 2025-08-01   | recent       |
+|         2 | 2025-07-28   | old          |
+|         3 | 2025-08-02   | recent       |
+|         4 | 2025-08-03   | recent       |
+|         5 | 2025-07-30   | old          |
+|         6 | 2025-08-04   | recent       |
+|         7 | 2025-08-05   | recent       |
+|         8 | 2025-08-01   | recent       |
+|         9 | 2025-07-29   | old          |
+|        10 | 2025-08-06   | recent       |
+|        11 | 2025-08-02   | recent       |
+|        12 | 2025-07-31   | old          |
+|        13 | 2025-08-03   | recent       |
+|        14 | 2025-08-04   | recent       |
+|        15 | 2025-08-01   | recent       |
+|        16 | 2025-07-30   | old          |
+|        17 | 2025-08-05   | recent       |
+|        18 | 2025-08-06   | recent       |
+|        19 | 2025-08-07   | recent       |
+|        20 | 2025-08-02   | recent       |
++-----------+--------------+--------------+
+20 rows in set (0.00 sec)
+
+mysql> select assigned_team,count(*)as total_tickets
+    -> from tickets
+    -> group by assigned_team;
++---------------+---------------+
+| assigned_team | total_tickets |
++---------------+---------------+
+| Network Team  |             7 |
+| Software Team |             7 |
+| Hardware Team |             6 |
++---------------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> select ticket_id,priority,status,
+    -> case
+    -> when status='open' then
+    -> case
+    -> when priority=3 then 'critical open'
+    -> when priority=2 then 'important open'
+    -> else 'minor open'
+    -> end
+    -> else 'not open'
+    -> end as open_priority_label
+    -> from tickets;
++-----------+----------+-----------+---------------------+
+| ticket_id | priority | status    | open_priority_label |
++-----------+----------+-----------+---------------------+
+|         1 |        3 | Open      | critical open       |
+|         2 |        2 | Closed    | not open            |
+|         3 |        1 | Pending   | not open            |
+|         4 |        2 | Open      | important open      |
+|         5 |        3 | Closed    | not open            |
+|         6 |        1 | Pending   | not open            |
+|         7 |        2 | Escalated | not open            |
+|         8 |        3 | Open      | critical open       |
+|         9 |        1 | Closed    | not open            |
+|        10 |        3 | Open      | critical open       |
+|        11 |        2 | Pending   | not open            |
+|        12 |        2 | Closed    | not open            |
+|        13 |        3 | Escalated | not open            |
+|        14 |        1 | Open      | minor open          |
+|        15 |        3 | Pending   | not open            |
+|        16 |        2 | Closed    | not open            |
+|        17 |        1 | Pending   | not open            |
+|        18 |        2 | Open      | important open      |
+|        19 |        3 | Open      | critical open       |
+|        20 |        2 | Escalated | not open            |
++-----------+----------+-----------+---------------------+
+20 rows in set (0.00 sec)
+
+mysql> select
+    -> case
+    -> when status='open' then 'open'
+    -> when status='closed' then 'closed'
+    -> else 'other'
+    -> end as status_category,
+    -> count(*) as total
+    -> from tickets
+    -> group by status_category;
++-----------------+-------+
+| status_category | total |
++-----------------+-------+
+| open            |     7 |
+| closed          |     5 |
+| other           |     8 |
++-----------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select ticket_id,assigned_team,
+    -> case
+    -> when assigned_team like '%software%' then 'sw'
+    -> when assigned_team like '%hardware%' then 'hw'
+    -> when assigned_team like '%network%' then 'nw'
+    -> else 'other'
+    -> end as team_type
+    -> from tickets;
++-----------+---------------+-----------+
+| ticket_id | assigned_team | team_type |
++-----------+---------------+-----------+
+|         1 | Network Team  | nw        |
+|         2 | Software Team | sw        |
+|         3 | Hardware Team | hw        |
+|         4 | Network Team  | nw        |
+|         5 | Software Team | sw        |
+|         6 | Software Team | sw        |
+|         7 | Network Team  | nw        |
+|         8 | Hardware Team | hw        |
+|         9 | Network Team  | nw        |
+|        10 | Software Team | sw        |
+|        11 | Hardware Team | hw        |
+|        12 | Software Team | sw        |
+|        13 | Network Team  | nw        |
+|        14 | Hardware Team | hw        |
+|        15 | Software Team | sw        |
+|        16 | Network Team  | nw        |
+|        17 | Hardware Team | hw        |
+|        18 | Software Team | sw        |
+|        19 | Network Team  | nw        |
+|        20 | Hardware Team | hw        |
++-----------+---------------+-----------+
+20 rows in set (0.00 sec)
+
+mysql> select issue_type,round(avg(priority),2)as avg_priority
+    -> from tickets
+    -> group by issue_type;
++------------+--------------+
+| issue_type | avg_priority |
++------------+--------------+
+| Network    |         2.29 |
+| Software   |         2.29 |
+| Hardware   |         1.67 |
++------------+--------------+
+3 rows in set (0.01 sec)
+
+mysql> select ticket_id,customer_name,priority,
+    -> case
+    -> when priority=3 then 'high risk'
+    -> when priority=2 then 'normal'
+    -> else 'low risk'
+    -> end as risk_label
+    -> from tickets
+    -> where issue_type='software';
++-----------+---------------+----------+------------+
+| ticket_id | customer_name | priority | risk_label |
++-----------+---------------+----------+------------+
+|         2 | Bob           |        2 | normal     |
+|         5 | Eve           |        3 | high risk  |
+|         6 | Frank         |        1 | low risk   |
+|        10 | Jack          |        3 | high risk  |
+|        12 | Leo           |        2 | normal     |
+|        15 | Oscar         |        3 | high risk  |
+|        18 | Rita          |        2 | normal     |
++-----------+---------------+----------+------------+
+7 rows in set (0.01 sec)
+
